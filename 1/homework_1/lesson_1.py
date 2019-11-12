@@ -31,7 +31,8 @@ RESULT_LIST = []
 
 for i in WORD_2:
     try:
-        i.encode('ascii')
+        # i.encode('ascii')
+        bytes(i, 'ascii')
     except UnicodeEncodeError:
         RESULT_LIST.append(i)
 print('Эти слова нельзя записать в байтовом типе с кодировкой ascii ', RESULT_LIST)
