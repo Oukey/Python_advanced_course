@@ -1,0 +1,11 @@
+name:
+- rack
+- bracket
+- speakers
+- tuner
+number_items: 4
+price:
+  bracket: 1200₽
+  rack: 10$
+  speakers: 17€
+  tuner: 6¥
