@@ -14,7 +14,7 @@ for i in WORD:
     print('UTF-8 ', e)
     print(type(e))
 
-# Задание №2
+# Задание №Data
 print('-' * 40)
 WORD_1 = [b'class', b'function', b'method']
 for i in WORD_1:
