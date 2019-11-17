@@ -7,9 +7,9 @@ from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 
 def get_message(client):
     '''
-    Утилита приёма и декодирования сообщения
-    принимает байты выдаёт словарь,
-    если принято что-то другое отдаёт ошибку значения
+    Утилита приема и декодирования сообщения
+    принимает байты выдает словарь,
+    если принято что-то другое отдает ошибку значения
     '''
 
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
@@ -28,6 +28,6 @@ def send_message(sock, message):
     принимает словарь и отправляет его
     '''
 
-    js_message = json.dumps(message)
-    encoded_message = js_message.encode(ENCODING)
+    json_message = json.dumps(message)
+    encoded_message = json_message.encode(ENCODING)
     sock.send(encoded_message)
