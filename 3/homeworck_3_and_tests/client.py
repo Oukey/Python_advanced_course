@@ -23,7 +23,7 @@ def create_presence(account_name='Guest'):
     return out
 
 
-def process_ans(message):
+def response_processing(message):
     '''Функция разбирает ответ сервера'''
     if RESPONSE in message:
         if message[RESPONSE] == 200:
@@ -54,7 +54,7 @@ def main():
     message_to_server = create_presence()
     send_message(transport, message_to_server)
     try:
-        answer = process_ans(get_message(transport))
+        answer = response_processing(get_message(transport))
         print(answer)
     except (ValueError, json.JSONDecodeError):
         print('Не удалось декодировать сообщение сервера.')
