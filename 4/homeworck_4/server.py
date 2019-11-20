@@ -6,7 +6,7 @@ import sys
 import json
 from socket import AF_INET, SOCK_STREAM
 from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTIONS, \
-    PRESENCE, TIME, USER, ERROR, DEFAULT_PORT, RESPONDEFAULT_IP_ADDRESSSE
+    PRESENCE, TIME, USER, ERROR, DEFAULT_PORT, RESPOND_DEFAULT_IP_ADDRESS
 from common.utils import get_message, send_message
 
 
@@ -20,7 +20,7 @@ def process_client_message(message):
             and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
         return {RESPONSE: 200}
     return {
-        RESPONDEFAULT_IP_ADDRESSSE: 400,
+        RESPOND_DEFAULT_IP_ADDRESS: 400,
         ERROR: 'Bad Request'
     }
 
