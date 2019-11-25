@@ -10,12 +10,12 @@ class TestClient(unittest.TestCase):
 
     def test_create_presence_0(self):
         """Тест функции генерации запроса о присутствии клиента"""
-        request = cl.create_presence()
+        request = cl.request_for_presence()
         self.assertIsInstance(request, dict)
 
     def test_create_presence_1(self):
         """Тест функции генерации запроса о присутствии клиента"""
-        request = cl.create_presence()
+        request = cl.request_for_presence()
         request['time'] = 2.2
         self.assertEqual(request, {
             'action': 'presence',
@@ -26,7 +26,7 @@ class TestClient(unittest.TestCase):
 
     def test_create_presence_2(self):
         """Тест функции генерации запроса о присутствии клиента"""
-        request = cl.create_presence('Tom')
+        request = cl.request_for_presence('Tom')
         request['time'] = 2.2
         self.assertEqual(request, {
             'action': 'presence',

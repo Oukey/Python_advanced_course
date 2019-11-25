@@ -7,7 +7,8 @@ import logging
 import socket
 import time
 import argparse
-from socket import AF_INET, SOCK_STREAM
+import log.client_log_config
+from errors import MissingData
 from common.variables import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, \
     RESPONSE, ERROR, DEFAULT_IP_ADDRESS, DEFAULT_PORT
 from common.utils import get_message, send_message
@@ -15,7 +16,7 @@ from common.utils import get_message, send_message
 LOGGER_CLIENT = logging.getLogger('client')
 
 
-def create_presence(account_name='Guest'):
+def request_for_presence(account_name='Guest'):
     '''Функция генерирует запрос о присутствии клиента'''
     message = {
         ACTION: PRESENCE,
@@ -35,48 +36,52 @@ def response_processing(message):
         if message[RESPONSE] == 200:
             return '200 : OK'
         return f'400 : {message[ERROR]}'
-    raise ValueError
+    raise MissingData
 
 
-def parser():
+def arg_parser():
     """"""
     my_parser = argparse.ArgumentParser()
     my_parser.add_argument('addr', default=DEFAULT_IP_ADDRESS, nargs='?')
-    my_parser.add_argument('зщке', default=DEFAULT_PORT, type=int, nargs='?')
+    my_parser.add_argument('port', default=DEFAULT_PORT, type=int, nargs='?')
     return my_parser
 
 
 def main():
     '''Загрузка параметров командной строки'''
-    parser = create_presence()
-    namespace = parser.parse_args(sys.args[1:])
-    server_address = namespace.addr
-    server_port = namespace.port
+    parser = arg_parser()
+    namespace = parser.parse_args(sys.argv[1:])
+    address = namespace.addr
+    port = namespace.port
 
-    try:
-        server_address = sys.argv[1]
-        server_port = int(sys.argv[2])
-        if server_port < 1024 or server_port > 65535:
-            raise ValueError
-    except IndexError:
-        server_address = DEFAULT_IP_ADDRESS
-        server_port = DEFAULT_PORT
-    except ValueError:
-        print(
-            'В качестве порта может быть указано только число в диапазоне от 1024 до 65535.')
+    # Проверка номера порта
+    if not 1023 < port < 65536:
+        LOGGER_CLIENT.critical(
+            f'Попытка запуска клиента с неподходящим номером порта: {port}.'
+            f' Допустимы адреса с 1024 до 65535. Клиент завершается.')
         sys.exit(1)
 
-        # Инициализация сокета и обмен
+    LOGGER_CLIENT.info(f'Запущен клиент с парамертами: '
+                       f'адрес сервера: {address} , порт: {port}')
 
-    transport = socket.socket(AF_INET, SOCK_STREAM)
-    transport.connect((server_address, server_port))
-    message_to_server = create_presence()
-    send_message(transport, message_to_server)
+    # Инициализация сокета и обмен
+
     try:
+        transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        transport.connect((address, port))
+        message_to_server = request_for_presence()
+        send_message(transport, message_to_server)
         answer = response_processing(get_message(transport))
+        LOGGER_CLIENT.info(f'Принят ответ от сервера {answer}')
         print(answer)
-    except (ValueError, json.JSONDecodeError):
-        print('Не удалось декодировать сообщение сервера.')
+    except json.JSONDecodeError:
+        LOGGER_CLIENT.error('Не удалось декодировать полученную Json строку.')
+    except MissingData as missing_error:
+        LOGGER_CLIENT.error(f'В ответе сервера отсутствует необходимое поле '
+                            f'{missing_error.missing_field}')
+    except ConnectionRefusedError:
+        LOGGER_CLIENT.critical(f'Не удалось подключиться к серверу {address}:{port}, '
+                               f'конечный компьютер отверг запрос на подключение.')
 
 
 if __name__ == '__main__':
