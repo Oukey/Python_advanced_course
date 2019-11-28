@@ -8,7 +8,7 @@ import common.variables as var
 sys.path.append('../')
 
 # Создание формировщика логов:
-FORMATTER_CLIENT = logging.Formatter('%(asctime)s %(levelname)s %(filename)s %(message)s')
+FORMATTER_CLIENT = logging.Formatter('%(asctime)-22s %(levelname)-8s %(filename)-13s %(message)s')
 
 # Подготовка файла для записи согов
 PATH = os.path.dirname(os.path.abspath(__file__))
