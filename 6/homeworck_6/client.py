@@ -8,6 +8,7 @@ import socket
 import time
 import argparse
 import log.client_log_config
+from decorators import log
 from errors import MissingData
 from common.variables import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, \
     RESPONSE, ERROR, DEFAULT_IP_ADDRESS, DEFAULT_PORT
@@ -16,6 +17,7 @@ from common.utils import get_message, send_message
 LOGGER_CLIENT = logging.getLogger('client')
 
 
+@log
 def request_for_presence(account_name='Guest'):
     '''Функция генерирует запрос о присутствии клиента'''
     message = {
@@ -29,6 +31,7 @@ def request_for_presence(account_name='Guest'):
     return message
 
 
+@log
 def response_processing(message):
     '''Функция разбирает ответ сервера'''
     LOGGER_CLIENT.debug(f'Обработка сообщения от сервера: {message}')
@@ -39,6 +42,7 @@ def response_processing(message):
     raise MissingData
 
 
+@log
 def arg_parser():
     """"""
     my_parser = argparse.ArgumentParser()
